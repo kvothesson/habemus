@@ -316,7 +316,8 @@ function fpsGen(i){return GENS[i].fps*Math.pow(2,S.tiers[i])*(i==1&&actT.coroBoo
 let humoT=0,estampaT=0,mateT=0;
 function fpsTotal(){let s=0;for(let i=0;i<GENS.length;i++)s+=S.n[i]*fpsGen(i);return s*(1+.1*S.gracia)*multEsp()*(humoT>0?7:1)*multAct()*(nubes.length?.5:1)}
 let fervor=0,fervorIdle=0;
-function valorClic(){return(D.clickX+fpsTotal()*D.clickPct)*(1+fervor)*(estampaT>0?33:1)*(mateT>0?3:1)*clicAct()*(panuelosT>0?2:1)*(pazT>0?2:1)}
+// los multiplicadores se apilan; la parte que depende de los fieles/s tiene tope para que una racha no saltee la misa
+function valorClic(){const fps=fpsTotal(),m=(1+fervor)*(estampaT>0?33:1)*(mateT>0?3:1)*clicAct()*(panuelosT>0?2:1)*(pazT>0?2:1);return D.clickX*m+Math.min(fps*D.clickPct*m,fps*.5)}
 function graciaPot(){return Math.floor(Math.cbrt(S.todo/1e6))}
 function ganar(x){S.f+=x;S.run+=x;S.todo+=x}
 function guardar(){S.t=Date.now();try{localStorage.setItem(CLAVE,JSON.stringify(S))}catch(e){}}
