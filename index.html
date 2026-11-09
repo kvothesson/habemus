@@ -1077,7 +1077,7 @@ function llegadaPaso(dt){if(actoI==0||cam.s<.7){runAnt=S.run;return}const crece=
     caminar({extra:true,i:(Math.random()*1e6)|0,x:sx,y:sy,ruta:[[p[0],p[1]]],v:18+Math.random()*8})}}
 
 // ================= MÉTRICAS (anónimas; apagadas hasta que haya servidor) =================
-const METRICAS_URL='';   // ej: https://habemus-metricas.<cuenta>.workers.dev/evento
+const METRICAS_URL='https://habemus-metricas.kvothesson.workers.dev/evento';
 const JUGADOR=(()=>{try{let id=localStorage.getItem('habemus.id');if(!id){id=Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem('habemus.id',id)}return id}catch(e){return 'anon'}})();
 function medir(ev,datos){if(!METRICAS_URL)return;const body=JSON.stringify(Object.assign({ev,id:JUGADOR,seg:Math.round(S.tiempo||0),acto:actoI,fieles:Math.floor(S.run||0),movil:innerWidth<760?1:0},datos||{}));
   try{if(navigator.sendBeacon)navigator.sendBeacon(METRICAS_URL,new Blob([body],{type:'text/plain'}));else fetch(METRICAS_URL,{method:'POST',body,keepalive:true})}catch(e){}}
