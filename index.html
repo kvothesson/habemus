@@ -112,6 +112,10 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 #menuOpciones button{font-family:inherit;font-size:28px;background:#ffd35a;color:#120c1c;border:0;padding:6px 24px;cursor:pointer;min-width:260px}
 #menuOpciones #seguir{background:#f6efe0}
 #pasar{color:#8f80a6;font-size:18px}
+#menuOpciones.on~#pasar{display:none}
+#pista{position:absolute;left:50%;top:58%;transform:translateX(-50%);background:rgba(18,12,28,.82);color:#ffd35a;padding:6px 14px;font-size:24px;pointer-events:none;white-space:nowrap;z-index:5;animation:latido 1.1s ease-in-out infinite;display:flex;align-items:center;gap:8px}
+#pista.fuera{display:none}
+@keyframes latido{50%{transform:translateX(-50%) scale(1.08)}}
 #volver{color:#6a5a80;font-size:17px;text-decoration:none}#volver:hover{color:#ffd35a}
 #viral{position:absolute;right:10px;top:56px;display:none;max-width:400px;align-items:center;gap:10px;background:#7a3dc8;color:#fff;padding:6px 8px 6px 12px;font-size:21px;max-width:92vw;box-shadow:4px 4px 0 #120c1c;z-index:4}
 #viral.on{display:flex;animation:entra .3s ease-out}
@@ -151,7 +155,7 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 </style>
 </head>
 <body>
-<div id="izq">
+<div id="izq"><div id="pista">Tocá la pantalla para bendecir</div>
   <canvas id="cv" width="200" height="150"></canvas>
   <div id="hud"><div id="cuenta"><img class="px" data-ic="fiel"><span>0</span></div><div id="fps">0/s</div><div id="lugar"></div><div id="fervor"><div></div></div></div>
   <div id="buffs"></div>
@@ -1181,7 +1185,7 @@ function anunciar(){const a=ANUNCIOS[anuncioI++%ANUNCIOS.length],e=document.getE
 const izq=document.getElementById('izq');
 function aPantallaCSS(sx,sy){const r=cv.getBoundingClientRect(),ir=izq.getBoundingClientRect();return[r.left-ir.left+sx/W*r.width,r.top-ir.top+sy/H*r.height]}
 function bendecir(px,py){
-  const v=valorClic();ganar(v);S.clics++;fervor=Math.min(1,fervor+.06);fervorIdle=0;blessT=.25;
+  const v=valorClic();ganar(v);S.clics++;if(S.clics>=3)document.getElementById('pista').classList.add('fuera');fervor=Math.min(1,fervor+.06);fervorIdle=0;blessT=.25;
   campana(PENTA[(Math.random()*PENTA.length)|0]*(1+fervor*.5));
   const pp=papaPos();for(let k=0;k<4;k++)parts.push({t:'e',x:pp[0],y:pp[1]-2,vx:(Math.random()*2-1)*25,vy:-10-Math.random()*20,g:45,life:1.1});
   flota('+'+corto(v),px,py);
@@ -1333,6 +1337,7 @@ document.getElementById('foto').onclick=()=>compartir(viralActual&&document.getE
 document.getElementById('compEst').onclick=()=>{const m=Math.floor(S.tiempo/60);compartir('Convertí a toda la Argentina en '+m+' minutos en la misa del Papa.'+(S.barrio?' Desde '+S.barrio+'.':''),estampita())};
 cargar();refrescar(true);ajustar();actualizarMultitud();crowd.dmax=crowd.dmaxObj;aplicarEscala(cam.Et,false);cam.L=cam.Lt;paso(0);nSpawn=crowd.n;if(S.fin)setTimeout(mostrarFin,300);
 requestAnimationFrame(loop);
+if(S.clics>=3)document.getElementById('pista').classList.add('fuera');
 abrirMenu();
 </script>
 </body>
