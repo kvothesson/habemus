@@ -1161,18 +1161,20 @@ function textoCompartir(){if(S.run<50)return 'Arranqué la misa del Papa en Pale
 async function compartir(texto,lienzo,tipo){metrica('compartir',{tipo:tipo||(lienzo?'estampita':texto?'momento':'foto')});texto=texto||textoCompartir();const c=lienzo||fotoEscena(texto);
   const destello=document.getElementById('destello');destello.classList.remove('on');void destello.offsetWidth;destello.classList.add('on');campana(2093,.04,.3);
   const msg=texto+' #HabemusFieles';
-  const link=location.origin+location.pathname;
+  const link=location.origin+location.pathname+'?c=1';
   let blob=null;try{blob=await new Promise(r=>c.toBlob(r,'image/png'))}catch(e){}
   // 1) menú de compartir del sistema con la imagen; 2) sin imagen; 3) menú propio
   const tactil=matchMedia('(pointer:coarse)').matches;
   if(tactil)try{const f=blob&&new File([blob],'habemus-fieles.png',{type:'image/png'});
-    if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:msg+' '+link,title:'Habemus Fieles'});return}
-    if(navigator.share){await navigator.share({title:'Habemus Fieles',text:msg,url:link});return}}catch(e){if(e&&e.name=='AbortError')return}
+    if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:msg+' '+link,title:'Habemus Fieles'});metrica('compartir',{tipo:'envio-celu'});return}
+    if(navigator.share){await navigator.share({title:'Habemus Fieles',text:msg,url:link});metrica('compartir',{tipo:'envio-celu'});return}}catch(e){if(e&&e.name=='AbortError'){metrica('compartir',{tipo:'cancelo-celu'});return}}
   menuCompartir(msg,link,blob)}
 function menuCompartir(msg,link,blob){const t=encodeURIComponent(msg+' '+link),m=document.getElementById('compMenu');
   const ops=[['WhatsApp','https://wa.me/?text='+t],['Telegram','https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(msg)],['Gmail','https://mail.google.com/mail/?view=cm&su='+encodeURIComponent('Habemus Fieles')+'&body='+t],['X','https://twitter.com/intent/tweet?text='+t],['Facebook','https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(link)]];
   m.innerHTML='<div class="cc"><b>Compartir</b>'+ops.map(o=>`<a href="${o[1]}" target="_blank" rel="noopener">${o[0]}</a>`).join('')+'<button id="ccCopiar">Copiar texto</button>'+(blob&&window.ClipboardItem?'<button id="ccImg">Copiar imagen</button>':'')+(blob?'<button id="ccBajar">Descargar imagen</button>':'')+'<button id="ccCerrar">Cerrar</button></div>';
   m.classList.add('on');m.onclick=e=>{if(e.target===m)m.classList.remove('on')};
+  m.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>metrica('compartir',{tipo:'menu-'+a.textContent.toLowerCase()})));
+  m.querySelectorAll('button').forEach(b=>{if(b.id!='ccCerrar')b.addEventListener('click',()=>metrica('compartir',{tipo:'menu-'+b.id.slice(2).toLowerCase()}))});
   document.getElementById('ccCerrar').onclick=()=>m.classList.remove('on');
   document.getElementById('ccCopiar').onclick=async()=>{try{await navigator.clipboard.writeText(msg+' '+link);toast('fiel','Texto copiado',1500)}catch(e){}};
   const ci=document.getElementById('ccImg');if(ci)ci.onclick=async()=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);toast('fiel','Imagen copiada: pegala en el chat',1800)}catch(e){}};
@@ -1381,6 +1383,7 @@ document.getElementById('compEst').onclick=()=>{const m=Math.floor(S.tiempo/60);
 cargar();refrescar(true);ajustar();actualizarMultitud();crowd.dmax=crowd.dmaxObj;aplicarEscala(cam.Et,false);cam.L=cam.Lt;paso(0);nSpawn=crowd.n;if(S.fin)setTimeout(mostrarFin,300);
 requestAnimationFrame(loop);
 if(S.clics>=3)document.getElementById('pista').classList.add('fuera');
+try{const q=new URLSearchParams(location.search);if(q.has('c')){metrica('compartir',{tipo:'llego-por-link'});history.replaceState(null,'',location.pathname)}}catch(e){}
 abrirMenu();
 </script>
 </body>
