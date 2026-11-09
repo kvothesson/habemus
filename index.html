@@ -1015,7 +1015,7 @@ const ACTOS=[
 let colaMom=[],esperaMom=0,actoI=-1,sentados=0,arrodillados=0,hostiaT=0,aguaT=0,pazT=0,cruzT=0,comunionT=0,hostias=0;
 function actoDe(run){let a=0;for(let k=0;k<ACTOS.length;k++)if(run>=ACTOS[k].desde)a=k;return a}
 function avanceActo(a,run){const d=Math.max(1,ACTOS[a].desde),h=a+1<ACTOS.length?ACTOS[a+1].desde:POB;return Math.max(0,Math.min(1,(Math.log(Math.max(1,run))-Math.log(d))/(Math.log(h)-Math.log(d))))}
-function cartelActo(a){medir('acto',{a});esperaMom=Math.max(esperaMom,3.5);const A=ACTOS[a],e=document.getElementById('acto');e.innerHTML=`<small>${A.num?'Momento '+A.num:'Antes de empezar'}</small><b>${A.tit}</b><span>${A.sub}</span>`;e.classList.remove('on');void e.offsetWidth;e.classList.add('on');clearTimeout(cartelActo.k);cartelActo.k=setTimeout(()=>e.classList.remove('on'),3800);organo([262,330,392,523],1.4,.05)}
+function cartelActo(a){metrica('acto',{a});esperaMom=Math.max(esperaMom,3.5);const A=ACTOS[a],e=document.getElementById('acto');e.innerHTML=`<small>${A.num?'Momento '+A.num:'Antes de empezar'}</small><b>${A.tit}</b><span>${A.sub}</span>`;e.classList.remove('on');void e.offsetWidth;e.classList.add('on');clearTimeout(cartelActo.k);cartelActo.k=setTimeout(()=>e.classList.remove('on'),3800);organo([262,330,392,523],1.4,.05)}
 function decir(quien,t){
   if(quien=='papa'){const[x,y]=aPantallaCSS(SX(papaPos()[0]),SY(papaPos()[1]-14));const d=document.createElement('div');d.className='grito papa';d.textContent=t;d.style.left=x+'px';d.style.top=y+'px';izq.appendChild(d);setTimeout(()=>d.remove(),4200);return}
   if(quien=='loc'){const e=document.getElementById('locutor');e.innerHTML=img('megafono')+'<span></span>';e.lastChild.textContent=t;e.classList.remove('on');void e.offsetWidth;e.classList.add('on');clearTimeout(anunciar.k);anunciar.k=setTimeout(()=>e.classList.remove('on'),5500);return}
@@ -1110,9 +1110,9 @@ function llegadaPaso(dt){if(actoI==0||cam.s<.7){runAnt=S.run;return}const crece=
 // ================= MÉTRICAS (anónimas; apagadas hasta que haya servidor) =================
 const METRICAS_URL='https://habemus-metricas.kvothesson.workers.dev/evento';
 const JUGADOR=(()=>{try{let id=localStorage.getItem('habemus.id');if(!id){id=Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem('habemus.id',id)}return id}catch(e){return 'anon'}})();
-function medir(ev,datos){if(!METRICAS_URL)return;const body=JSON.stringify(Object.assign({ev,id:JUGADOR,seg:Math.round(S.tiempo||0),acto:actoI,fieles:Math.floor(S.run||0),movil:innerWidth<760?1:0},datos||{}));
+function metrica(ev,datos){if(!METRICAS_URL)return;const body=JSON.stringify(Object.assign({ev,id:JUGADOR,seg:Math.round(S.tiempo||0),acto:actoI,fieles:Math.floor(S.run||0),movil:innerWidth<760?1:0},datos||{}));
   try{if(navigator.sendBeacon)navigator.sendBeacon(METRICAS_URL,new Blob([body],{type:'text/plain'}));else fetch(METRICAS_URL,{method:'POST',body,keepalive:true})}catch(e){}}
-let pulsoMet=60;document.addEventListener('visibilitychange',()=>{if(document.hidden&&!enMenu)medir('salida')});
+let pulsoMet=60;document.addEventListener('visibilitychange',()=>{if(document.hidden&&!enMenu)metrica('salida')});
 // ================= MENÚ, CINEMÁTICA Y COMPARTIR =================
 let enMenu=true;
 const CINE=['¡Buenos días, querida Argentina!','Tierra que supo tener a Dios con la diez… y a un Papa propio, al mismo tiempo.','Hoy vengo por todos ustedes. Los 46.044.703.','¿Y vos, de dónde venís?'];
@@ -1133,7 +1133,7 @@ function abrirMenu(){const m=document.getElementById('menu');m.classList.add('on
   document.getElementById('barrio').value=S.barrio||'';const cv=document.getElementById('retrato');let linea=0,letra=0,frame=0;const globo=document.getElementById('globoPapa'),fin=document.getElementById('menuOpciones');fin.classList.remove('on');
   clearInterval(abrirMenu.k);abrirMenu.k=setInterval(()=>{frame++;if(linea<CINE.length){letra+=1;globo.textContent=CINE[linea].slice(0,letra);if(letra<=CINE[linea].length){if(letra==1)organo([[196,247,294],[220,277,330],[175,220,262],[196,247,294]][linea%4],1.4,.018);vozPapa(CINE[linea][letra-1],letra)}if(letra>=CINE[linea].length+18){linea++;letra=0}if(linea>=CINE.length)fin.classList.add('on')}retratoPapa(cv,linea<CINE.length&&letra<=(CINE[linea]||'').length?(frame>>1):0)},45);
   m.onclick=e=>{if(e.target.closest('#menuOpciones'))return;if(linea<CINE.length){if(letra<CINE[linea].length)letra=CINE[linea].length;else{linea++;letra=0;if(linea>=CINE.length){linea=CINE.length-1;letra=CINE[linea].length;fin.classList.add('on')}}}}}
-function empezar(nueva){const b=document.getElementById('barrio').value.trim().slice(0,22);if(nueva){S=nuevo();derivar();document.getElementById('fin').classList.remove('on');actoI=-1;uVis=-1;hostias=0;crowd.dmax=0}S.barrio=b;enMenu=false;medir(nueva?'inicio':'sigue');ult=performance.now();document.getElementById('menu').classList.remove('on');clearInterval(abrirMenu.k);salida();if(ac&&ac.state=='suspended')ac.resume();guardar();refrescar(true)}
+function empezar(nueva){const b=document.getElementById('barrio').value.trim().slice(0,22);if(nueva){S=nuevo();derivar();document.getElementById('fin').classList.remove('on');actoI=-1;uVis=-1;hostias=0;crowd.dmax=0}S.barrio=b;enMenu=false;metrica(nueva?'inicio':'sigue');ult=performance.now();document.getElementById('menu').classList.remove('on');clearInterval(abrirMenu.k);salida();if(ac&&ac.state=='suspended')ac.resume();guardar();refrescar(true)}
 document.getElementById('nueva').onclick=()=>empezar(true);
 document.getElementById('seguir').onclick=()=>empezar(false);
 // --- momentos virales: combinaciones al azar, cada uno se puede compartir
@@ -1158,7 +1158,7 @@ function textoCompartir(){if(S.run<50)return 'Arranqué la misa del Papa en Pale
   n+' almas y contando. El Papa te espera en Palermo.',
   'Convertí a '+n+' argentinos. Mi abuela está orgullosa.',
   'Palermo explotado: '+n+' fieles y el Papa saludando. Superame.'];return f[Math.floor(Math.random()*f.length)]}
-async function compartir(texto,lienzo,tipo){medir('compartir',{tipo:tipo||(lienzo?'estampita':texto?'momento':'foto')});texto=texto||textoCompartir();const c=lienzo||fotoEscena(texto);
+async function compartir(texto,lienzo,tipo){metrica('compartir',{tipo:tipo||(lienzo?'estampita':texto?'momento':'foto')});texto=texto||textoCompartir();const c=lienzo||fotoEscena(texto);
   const destello=document.getElementById('destello');destello.classList.remove('on');void destello.offsetWidth;destello.classList.add('on');campana(2093,.04,.3);
   const msg=texto+' #HabemusFieles';
   const link=location.origin+location.pathname;
@@ -1341,8 +1341,8 @@ function paso(dt){
   espPaso(dt);
   {const o=crowd.dmaxObj>1e8?(AREA?AREA.area.length*AREA.paso:1e4):crowd.dmaxObj,dif=o-crowd.dmax;if(dif>0)crowd.dmax+=Math.min(dif,(1.2+dif*.35)*dt);if(crowd.dmaxObj>1e8&&dif<=1)crowd.dmax=1e9}
   caminantesPaso(dt);eventosPaso(dt);historiaPaso(dt);previaPaso(dt);S.tiempo=(S.tiempo||0)+dt;
-  if(S.run>=POB&&!S.fin){S.fin=1;medir('fin');setTimeout(mostrarFin,600)}
-  pulsoMet-=dt;if(pulsoMet<=0){pulsoMet=60;medir('pulso')}
+  if(S.run>=POB&&!S.fin){S.fin=1;metrica('fin');setTimeout(mostrarFin,600)}
+  pulsoMet-=dt;if(pulsoMet<=0){pulsoMet=60;metrica('pulso')}
   if(cam.s<.7&&crowd.dmax>0&&actoI>0){acLejos+=dt*Math.min(60,10+Math.log10(fpsTotal()+1)*6);let intentos=0;while(acLejos>=1&&intentos++<80){const x=cam.x+(Math.random()-.5)*cam.vw,y=cam.y+(Math.random()-.5)*cam.vh,dd=distEn(x,y);if(dd>=65535||dd<=crowd.dmax+8||dd>crowd.dmax+260||!caminable(x,y))continue;acLejos--;const L=Math.hypot(x,y)||1,v=(10+Math.random()*8)/cam.s;parts.push({t:'p',x,y,vx:-x/L*v,vy:-y/L*v,g:0,life:Math.min(5,(dd-crowd.dmax)*UPM/v),c:MULT[(Math.random()*MULT.length)|0]})}acLejos=Math.min(acLejos,3)}
   if(false){while(acLejos>=1){acLejos--;const vb=cam.y+cam.vh/2,v=(14+Math.random()*10)/cam.s,lado=Math.random()<.3;const x=lado?(Math.random()<.5?-1:1)*(AV+6+Math.random()*16):(Math.random()*2-1)*Math.min(crowd.half,cam.vw/2)*.9;parts.push({t:'p',x,y:vb,vx:0,vy:-v,g:0,life:Math.max(.5,(vb-crowd.back+5)/v)+(lado?3:0),c:MULT[(Math.random()*MULT.length)|0]})}}
   if(olaT>=0){olaT+=dt*.45;if(olaT>1)olaT=-1}
