@@ -323,7 +323,8 @@ function guardar(){S.t=Date.now();try{localStorage.setItem(CLAVE,JSON.stringify(
 function cargar(){
   try{const r=JSON.parse(localStorage.getItem(CLAVE));if(r&&r.n){S=Object.assign(nuevo(),r);while(S.n.length<GENS.length){S.n.push(0);S.tiers.push(0)}}}catch(e){}
   derivar();
-  const fuera=Math.min(8*3600,(Date.now()-S.t)/1000),g=fpsTotal()*fuera*.5;
+  // lo ganado mientras no estabas: tope de 5 min de producción y del 25% de lo juntado, para no saltearse la misa
+  const fuera=Math.min(8*3600,(Date.now()-S.t)/1000),g=Math.min(fpsTotal()*fuera*.5,fpsTotal()*300,(S.run||0)*.25);
   if(fuera>60&&g>1){ganar(g);setTimeout(()=>toast('coro','Mientras no estabas: +'+fmt(g)),600)}
 }
 
