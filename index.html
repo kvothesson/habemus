@@ -1122,9 +1122,17 @@ function retratoPapa(cv,f){const x=cv.getContext('2d');x.clearRect(0,0,cv.width,
   // brazo saludando y boca que habla
   const ax=4+14,ay=3+12,hx=f%2?24:23,hy=f%2?6:7;x.fillStyle=pal.K;for(let t=0;t<=1;t+=.05)x.fillRect(Math.round(ax+(hx-ax)*t)-1,Math.round(ay+(hy-ay)*t)-1,4,4);x.fillRect(hx-1,hy-3,5,5);x.fillStyle=pal.W;for(let t=0;t<=1;t+=.05)x.fillRect(Math.round(ax+(hx-ax)*t),Math.round(ay+(hy-ay)*t),2,2);x.fillStyle=pal.S;x.fillRect(hx,hy-2,3,3);
   if(f%2){x.fillStyle='#7a2a3a';x.fillRect(11,3+8,3,1)}}
+// voz del Papa en la cinemática: "wawawa" de personaje que habla
+const VOCAL={a:1,'á':1.04,e:1.12,'é':1.15,i:1.26,'í':1.3,o:.94,'ó':.97,u:.88,'ú':.9};
+function vozPapa(ch,k){const a=ac,o2=master||null;if(!a||a.state!='running'||!o2||mudo)return;const c=ch.toLowerCase();if(!/[a-záéíóúñü]/.test(c)||k%2)return;
+  const t=a.currentTime,f=165*(VOCAL[c]||1.06)*(1+(Math.random()-.5)*.08),o=a.createOscillator(),g=a.createGain(),lp=a.createBiquadFilter();
+  o.type='square';o.frequency.setValueAtTime(f*1.08,t);o.frequency.exponentialRampToValueAtTime(f,t+.05);lp.type='lowpass';lp.frequency.value=VOCAL[c]?1500:900;lp.Q.value=4;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05,t+.008);g.gain.exponentialRampToValueAtTime(.0008,t+.075);o.connect(lp).connect(g).connect(o2);o.start(t);o.stop(t+.09)}
+function despertarAudio(){audio();salida();if(ac&&ac.state=='suspended')ac.resume()}
+addEventListener('pointerdown',despertarAudio,{capture:true});addEventListener('keydown',despertarAudio,{capture:true});
 function abrirMenu(){const m=document.getElementById('menu');m.classList.add('on');const hay=S.run>0&&!S.fin;document.getElementById('seguir').style.display=hay?'':'none';document.getElementById('nueva').textContent=hay?'Misa nueva':'Empezar la misa';
   document.getElementById('barrio').value=S.barrio||'';const cv=document.getElementById('retrato');let linea=0,letra=0,frame=0;const globo=document.getElementById('globoPapa'),fin=document.getElementById('menuOpciones');fin.classList.remove('on');
-  clearInterval(abrirMenu.k);abrirMenu.k=setInterval(()=>{frame++;if(linea<CINE.length){letra+=1;globo.textContent=CINE[linea].slice(0,letra);if(letra>=CINE[linea].length+18){linea++;letra=0}if(linea>=CINE.length)fin.classList.add('on')}retratoPapa(cv,linea<CINE.length&&letra<=(CINE[linea]||'').length?(frame>>1):0)},45);
+  clearInterval(abrirMenu.k);abrirMenu.k=setInterval(()=>{frame++;if(linea<CINE.length){letra+=1;globo.textContent=CINE[linea].slice(0,letra);if(letra<=CINE[linea].length){if(letra==1)organo([[196,247,294],[220,277,330],[175,220,262],[196,247,294]][linea%4],1.4,.018);vozPapa(CINE[linea][letra-1],letra)}if(letra>=CINE[linea].length+18){linea++;letra=0}if(linea>=CINE.length)fin.classList.add('on')}retratoPapa(cv,linea<CINE.length&&letra<=(CINE[linea]||'').length?(frame>>1):0)},45);
   m.onclick=e=>{if(e.target.closest('#menuOpciones'))return;if(linea<CINE.length){if(letra<CINE[linea].length)letra=CINE[linea].length;else{linea++;letra=0;if(linea>=CINE.length){linea=CINE.length-1;letra=CINE[linea].length;fin.classList.add('on')}}}}}
 function empezar(nueva){const b=document.getElementById('barrio').value.trim().slice(0,22);if(nueva){S=nuevo();derivar();document.getElementById('fin').classList.remove('on');actoI=-1;uVis=-1;hostias=0;crowd.dmax=0}S.barrio=b;enMenu=false;medir(nueva?'inicio':'sigue');ult=performance.now();document.getElementById('menu').classList.remove('on');clearInterval(abrirMenu.k);salida();if(ac&&ac.state=='suspended')ac.resume();guardar();refrescar(true)}
 document.getElementById('nueva').onclick=()=>empezar(true);
