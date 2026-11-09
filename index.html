@@ -401,7 +401,6 @@ function ambiente(){const a=ac;if(!a||!master||a.state!='running')return;ajustar
   coroCanta(t);
   const nb=S.n[3],corchea=60/104/2,PAT=[1,0,1,1,1,0,1,0];
   if(proxBeat<t)proxBeat=t+.05;
-  while(proxBeat<t+.2){if(nb>0&&PAT[beatN%8])rasguido(proxBeat,.014+.004*Math.min(nb,6),beatN%2);beatN++;proxBeat+=corchea}
   if(S.n[0]>0&&t>=proxCampanita){proxCampanita=t+Math.max(.8,7/Math.sqrt(S.n[0]))*(.6+Math.random()*.8);campana(PENTA[(Math.random()*6)|0]*2,.012,.5)}
 }
 setInterval(ambiente,60);
