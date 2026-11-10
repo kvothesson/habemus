@@ -54,7 +54,7 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 #dock{position:absolute;left:0;right:0;bottom:0;padding:14px 8px 6px;background:linear-gradient(transparent,#120c1cdd 40%);display:flex;flex-direction:row;gap:12px;align-items:flex-end;justify-content:center;pointer-events:none}
 @media (max-width:760px){#dock{flex-direction:column;align-items:center;gap:6px}
   #hud{top:48px}#cuenta{font-size:30px}#cuenta img{width:28px;height:28px}#fps{font-size:20px}
-  #arriba{left:8px;right:8px;justify-content:flex-end}#prog .barra{width:70px}
+  #arriba{left:8px;right:8px;justify-content:flex-end}#prog .barra{width:56px}#prog span{white-space:nowrap}
   #buffs{top:48px}.buff{font-size:18px}.buff img{width:22px;height:22px}
   #dock #mejoras{max-width:100%;flex-wrap:nowrap;justify-content:flex-start}#dock{padding-bottom:16px}.up{width:42px;height:50px}.up img{width:30px;height:30px}.gen{width:58px;height:72px}.gen img.i{width:36px;height:36px}
   .act{width:50px;height:50px}.act img{width:32px;height:32px}#activas{top:auto;bottom:170px;transform:none;gap:8px}
@@ -142,7 +142,7 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 #destello{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}
 #destello.on{animation:flash .5s ease-out}
 @keyframes flash{0%{opacity:.85}100%{opacity:0}}
-#foto{background:#120c1ccc;width:36px;height:36px;padding:3px;border:0;cursor:pointer}#foto img{width:30px;height:30px}
+#foto{display:flex;align-items:center;gap:6px;font-family:inherit;font-size:21px;background:#ffd35a;color:#120c1c;height:36px;padding:0 10px 0 5px;border:0;cursor:pointer;box-shadow:3px 3px 0 #120c1c}#foto img{width:26px;height:26px}#foto:hover{background:#ffe08a}
 @media (max-width:760px){#viral{top:96px;left:8px;right:8px;max-width:none;font-size:18px}#retrato{width:180px;height:192px}#globoPapa{font-size:22px}#menuOpciones h1{font-size:40px}}
 #compMenu{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;background:#120c1cb0}
 #compMenu.on{display:flex}
@@ -177,7 +177,7 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
   <canvas id="cv" width="200" height="150"></canvas>
   <div id="hud"><div id="cuenta"><img class="px" data-ic="fiel"><span>0</span></div><div id="fps">0/s</div><div id="lugar"></div><div id="fervor"><div></div></div></div>
   <div id="buffs"></div>
-  <div id="arriba"><div id="prog"><img class="px" data-ic="bandera"><div class="barra"><div></div></div><span>0%</span></div><button id="foto" title="Sacar foto y compartir"><img class="px" data-ic="camara"></button><button id="mute" title="Sonido">♪</button></div>
+  <div id="arriba"><div id="prog"><img class="px" data-ic="bandera"><div class="barra"><div></div></div><span>0%</span></div><button id="foto" title="Compartir una foto de tu misa"><img class="px" data-ic="camara"><span>Compartir</span></button><button id="mute" title="Sonido">♪</button></div>
   <div id="toast"></div>
   <div id="viral"></div>
   <div id="destello"></div>
@@ -1303,7 +1303,7 @@ function refrescar(forzar){
   }
   for(const b of [...elMej.children,...elGens.children]){if(b._c==null)continue;const k=b._i!=null?'g'+b._i:b._k,no=S.f<b._c;if(b.classList.contains('oculto')){b.disabled=no;continue}if(PUEDE[k]===false&&!no)avisarListo(b);PUEDE[k]=!no;b.disabled=no}
   actualizarActivas();
-  const pr=Math.min(1,S.run/POB);elProg.querySelector('.barra div').style.width=(pr*100)+'%';elProg.querySelector('span').textContent=corto(Math.min(S.run,POB))+' · '+(pr<.1?(pr*100).toFixed(2):(pr*100).toFixed(1)).replace('.',',')+'%';
+  const pr=Math.min(1,S.run/POB);elProg.querySelector('.barra div').style.width=(pr*100)+'%';elProg.querySelector('span').textContent=(innerWidth<760?'':corto(Math.min(S.run,POB))+' · ')+(pr<.1?(pr*100).toFixed(2):(pr*100).toFixed(1)).replace('.',',')+'%';
   const fb=document.getElementById('fervor');fb.classList.toggle('on',fervor>.05);fb.firstElementChild.style.width=(fervor*100)+'%';
   const bf=[];if(humoT>0)bf.push(['humo','x7 '+Math.ceil(humoT)+'s','']);if(estampaT>0)bf.push(['estampa','x33 '+Math.ceil(estampaT)+'s','']);if(mateT>0)bf.push(['mate','x3 '+Math.ceil(mateT)+'s','']);if(nubes.length)bf.push(['nube','½ ¡tocalas!','malo']);for(const a of ACTIVAS)if((actT[a.id]||0)>0&&a.id!='agua')bf.push([a.ic,(a.id=='ola'?'clic x3 ':a.id=='incienso'?'x2 ':'x3 ')+Math.ceil(actT[a.id])+'s','']);if(panuelosT>0)bf.push(['panuelo','clic x2 '+Math.ceil(panuelosT)+'s','']);if(fervor>.05)bf.push(['mano','x'+(1+fervor).toFixed(1).replace('.',','),'']);
   const hb=bf.map(b=>`<div class="buff ${b[2]}">${img(b[0])}${b[1]}</div>`).join('');if(hb!=elBuffs._h){elBuffs._h=hb;elBuffs.innerHTML=hb}
