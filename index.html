@@ -964,7 +964,8 @@ const RUTA=[[-319.9,7350.0],[-316.1,7280.0],[-313.0,7210.0],[-307.4,7140.0],[-29
 // RUTA: centro de Libertador según OpenStreetMap, en unidades del juego, desde Olleros hasta el frente del escenario
 let RUTA_L=0;const RUTA_D=[0];for(let i=1;i<RUTA.length;i++){RUTA_L+=Math.hypot(RUTA[i][0]-RUTA[i-1][0],RUTA[i][1]-RUTA[i-1][1]);RUTA_D.push(RUTA_L)}
 function enRuta(d){d=Math.max(0,Math.min(RUTA_L,d));let i=1;while(i<RUTA.length-1&&RUTA_D[i]<d)i++;const a=RUTA[i-1],b=RUTA[i],k=(d-RUTA_D[i-1])/Math.max(1e-6,RUTA_D[i]-RUTA_D[i-1]);return[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k]}
-function avancePrevia(){return Math.min(1,S.run/400)}
+const PREVIA=150;
+function avancePrevia(){return Math.min(1,S.run/PREVIA)}
 let uVis=-1;
 function posMovil(){if(uVis<0)uVis=avancePrevia();return enRuta(RUTA_L*uVis)}
 function suavizarPrevia(dt){const obj=avancePrevia();if(uVis<0)uVis=obj;const dif=obj-uVis;if(dif<=0){uVis=Math.max(obj,uVis-dt*.2);return}uVis+=Math.min(dif,Math.max(.004,dif*1.2)*dt)}
@@ -987,7 +988,7 @@ const ACTOS=[
  {desde:0,num:'',tit:'La previa',sub:'El Papa llega en el papamóvil por Libertador',mom:[
    {f:.05,quien:'loc',t:'¡Agiten los pañuelos! ¡Flameen las banderas!',ef:'panuelos'},
    {f:.5,quien:'gente',t:'¡Que viva el Papa León!'}]},
- {desde:400,num:'I',tit:'Ritos iniciales',sub:'La misa empieza',mom:[
+ {desde:PREVIA,num:'I',tit:'Ritos iniciales',sub:'La misa empieza',mom:[
    {f:.02,quien:'papa',t:'En el nombre del Padre, del Hijo y del Espíritu Santo.',resp:'Amén.'},
    {f:.3,quien:'papa',t:'La paz esté con ustedes.',resp:'Y con tu espíritu.'},
    {f:.6,quien:'papa',t:'Presentémonos humildemente ante el Señor.',resp:'Yo confieso…'},
@@ -1050,7 +1051,7 @@ function historiaPaso(dt){
   papaFuera=papaFuera||a==0;
 }
 function papaPos(){if(actoI==0){const[mx,my]=posMovil();return[mx,my-24]}const mv=eventos.find(e=>e.tipo=='movil');if(mv&&mv.y!=null)return[0,mv.y-24];return[0,-26]}
-function previaY(){const vb=cam.y+((H-DOCKC/ESC_CSS)-H/2)/cam.s-6,u=Math.min(1,S.run/400);return vb+(14-vb)*Math.sqrt(u)}
+function previaY(){const vb=cam.y+((H-DOCKC/ESC_CSS)-H/2)/cam.s-6,u=Math.min(1,S.run/PREVIA);return vb+(14-vb)*Math.sqrt(u)}
 function llegaElPapa(){const[x,y]=aPantallaCSS(SX(0),SY(-30));flota('¡Llegó el Papa!',x,y,'movil',true);campana(1046.5,.07,1.5);olaT=0;panuelosT=6;for(let q=0;q<20;q++)chispas(0,-30,'#ffe08a',2)}
 function historiaDibujar(){
   // la previa: el Papa sube por Libertador en el papamóvil
