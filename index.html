@@ -150,6 +150,7 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 #compMenu b{font-weight:normal;font-size:30px;text-align:center}
 #compMenu a,#compMenu button{font-family:inherit;font-size:24px;text-align:center;padding:4px 10px;background:#2a1e38;color:#fff;text-decoration:none;border:0;cursor:pointer}
 #compMenu #ccCerrar{background:transparent;color:#6a5a80}
+#compMenu .vista{max-width:92vw;align-items:stretch}#compMenu .vista img{display:block;max-width:100%;max-height:52vh;margin:0 auto;image-rendering:pixelated;border:3px solid #120c1c}#compMenu .vista p{margin:4px 0;font-size:20px;text-align:center}#compMenu #ccMandar{background:#ffd35a;color:#120c1c;font-size:30px;padding:8px 10px;box-shadow:3px 3px 0 #120c1c}
 #credito{position:absolute;left:6px;bottom:2px;font-size:13px;color:#ffffffaa;pointer-events:none;text-shadow:1px 1px 0 #120c1c}
 #tip{position:absolute;pointer-events:none;background:#f6efe0;color:#120c1c;padding:4px 10px;font-size:19px;line-height:1.05;max-width:260px;display:none;box-shadow:3px 3px 0 #120c1c;transform:translateX(-50%)}
 #tip b{font-size:22px;font-weight:normal;display:block}
@@ -1168,10 +1169,21 @@ async function compartir(texto,lienzo,tipo){metrica('compartir',{tipo:tipo||(lie
   let blob=null;try{blob=await new Promise(r=>c.toBlob(r,'image/png'))}catch(e){}
   // 1) menú de compartir del sistema con la imagen; 2) sin imagen; 3) menú propio
   const tactil=matchMedia('(pointer:coarse)').matches;
-  if(tactil)try{const f=blob&&new File([blob],'habemus-fieles.png',{type:'image/png'});
-    if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:msg+' '+link,title:'Habemus Fieles'});metrica('compartir',{tipo:'envio-celu'});return}
-    if(navigator.share){await navigator.share({title:'Habemus Fieles',text:msg,url:link});metrica('compartir',{tipo:'envio-celu'});return}}catch(e){if(e&&e.name=='AbortError'){metrica('compartir',{tipo:'cancelo-celu'});return}}
+  if(tactil&&navigator.share)return vistaCelu(msg,link,blob);
   menuCompartir(msg,link,blob)}
+// en el celu: primero se ve la foto y recién con "Mandar" se abre el menú del teléfono
+function vistaCelu(msg,link,blob){const m=document.getElementById('compMenu'),url=blob?URL.createObjectURL(blob):'';metrica('compartir',{tipo:'vista-celu'});
+  m.innerHTML='<div class="cc vista">'+(url?'<img src="'+url+'" alt="Tu foto de la misa">':'')+'<p></p><button id="ccMandar">Mandar</button><button id="ccMas">Más opciones</button><button id="ccCerrar">Cerrar</button></div>';
+  m.querySelector('p').textContent=msg;m.classList.add('on');
+  const cerrar=()=>{m.classList.remove('on');if(url)setTimeout(()=>URL.revokeObjectURL(url),1000)};
+  m.onclick=e=>{if(e.target===m){metrica('compartir',{tipo:'cerro-vista'});cerrar()}};
+  document.getElementById('ccCerrar').onclick=()=>{metrica('compartir',{tipo:'cerro-vista'});cerrar()};
+  document.getElementById('ccMas').onclick=()=>{metrica('compartir',{tipo:'mas-opciones'});cerrar();menuCompartir(msg,link,blob)};
+  document.getElementById('ccMandar').onclick=async()=>{try{const f=blob&&new File([blob],'habemus-fieles.png',{type:'image/png'});
+      if(f&&navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],text:msg+' '+link,title:'Habemus Fieles'});
+      else await navigator.share({title:'Habemus Fieles',text:msg,url:link});
+      metrica('compartir',{tipo:'envio-celu'});cerrar()}
+    catch(e){if(e&&e.name=='AbortError')metrica('compartir',{tipo:'cancelo-celu'});else{cerrar();menuCompartir(msg,link,blob)}}}}
 function menuCompartir(msg,link,blob){const t=encodeURIComponent(msg+' '+link),m=document.getElementById('compMenu');
   const ops=[['WhatsApp','https://wa.me/?text='+t],['Telegram','https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(msg)],['Gmail','https://mail.google.com/mail/?view=cm&su='+encodeURIComponent('Habemus Fieles')+'&body='+t],['X','https://twitter.com/intent/tweet?text='+t],['Facebook','https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(link)]];
   m.innerHTML='<div class="cc"><b>Compartir</b>'+ops.map(o=>`<a href="${o[1]}" target="_blank" rel="noopener">${o[0]}</a>`).join('')+'<button id="ccCopiar">Copiar texto</button>'+(blob&&window.ClipboardItem?'<button id="ccImg">Copiar imagen</button>':'')+(blob?'<button id="ccBajar">Descargar imagen</button>':'')+'<button id="ccCerrar">Cerrar</button></div>';
