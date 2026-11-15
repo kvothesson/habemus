@@ -1343,7 +1343,7 @@ cv.addEventListener('pointerdown',e=>{
   const ir=izq.getBoundingClientRect(),cx=e.clientX-ir.left,cy=e.clientY-ir.top;
   for(let k=palomas.length-1;k>=0;k--){const p=palomas[k];if(Math.hypot(ix-p.x,iy-p.y)<12){palomas.splice(k,1);atraparPaloma(cx,cy);return}}
   for(let k=burbujas.length-1;k>=0;k--){const b=burbujas[k];if(b.sx!=null&&Math.hypot(ix-b.sx,iy-b.sy)<11){burbujas.splice(k,1);tocarBurbuja(b,cx,cy);return}}
-  for(let k=nubes.length-1;k>=0;k--){const n=nubes[k];if(Math.abs(ix-n.x)<15&&Math.abs(iy-n.y)<10){nubes.splice(k,1);const g=fpsTotal()*3+valorClic();ganar(g);flota('+'+corto(g),cx,cy,'nube');campana(784);if(!nubes.length)toast('fiel','¡Salió el sol!');return}}
+  for(let k=nubes.length-1;k>=0;k--){const n=nubes[k];if(Math.abs(ix-n.x)<15&&Math.abs(iy-n.y)<10){nubes.splice(k,1);const g=fpsTotal()+valorClic();ganar(g);flota('+'+corto(g),cx,cy,'nube');campana(784);if(!nubes.length)toast('fiel','¡Salió el sol!');return}}
   bendecir(cx,cy);
 });
 window.addEventListener('keydown',e=>{const nk=parseInt(e.key);if(nk>=1&&nk<=ACTIVAS.length){const a=ACTIVAS[nk-1];if(tieneA(a.id))usarActiva(a);return}if(e.code=='Space'&&!e.repeat){e.preventDefault();const[x,y]=aPantallaCSS(SX(0),SY(-28));bendecir(x,y)}});
