@@ -1,1 +1,4 @@
 *.local.md
+node_modules/
+.cloudflare/
+metricas/.secretos.json
