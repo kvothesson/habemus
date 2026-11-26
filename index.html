@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Habemus Fieles</title>
-<meta name="description" content="Llená Palermo para la misa del Papa hasta los 46.044.703 argentinos. Juego incremental gratis en pixel art.">
+<title>Habemus Fieles · juego incremental del Papa gratis en el navegador</title>
+<meta name="description" content="Juego incremental gratis en pixel art: el Papa llega a Palermo y tenés que llenar la misa con los 46.044.703 argentinos. En el navegador y el celu.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Kvothesson">
 <meta property="og:title" content="Habemus Fieles">
@@ -171,9 +171,55 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 #toast img{width:32px;height:32px}
 #toast.on{display:flex;animation:entra .3s ease-out}
 @keyframes entra{from{transform:translate(-50%,20px);opacity:0}}
+.sinjs{position:fixed;inset:0;z-index:20;overflow:auto;background:#120c1c;color:#f6efe0;font:18px/1.5 monospace;padding:24px 16px;box-sizing:border-box}.sinjs div{max-width:640px;margin:0 auto}.sinjs h1{color:#ffd35a;font-size:32px;margin:0 0 12px}.sinjs h2{color:#ffd35a;font-size:22px;margin:20px 0 6px}.sinjs a{color:#ffd35a}.sinjs .aviso{border-left:3px solid #ffd35a;padding-left:10px}
 </style>
+<link rel="canonical" href="https://kvothesson.com/habemus/">
+<meta property="og:locale" content="es_AR">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "VideoGame",
+ "name": "Habemus Fieles",
+ "description": "Juego incremental gratis en pixel art: el Papa llega a Palermo y tenés que llenar la misa con los 46.044.703 argentinos. En el navegador y el celu.",
+ "url": "https://kvothesson.com/habemus/",
+ "inLanguage": "es",
+ "genre": [
+  "Incremental",
+  "Clicker",
+  "Pixel art"
+ ],
+ "gamePlatform": "Web browser",
+ "applicationCategory": "Game",
+ "operatingSystem": "Any",
+ "isAccessibleForFree": true,
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "USD"
+ },
+ "author": {
+  "@type": "Organization",
+  "name": "Kvothesson",
+  "url": "https://kvothesson.com/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "Kvothesson",
+  "url": "https://kvothesson.com/"
+ },
+ "image": "https://kvothesson.com/habemus/og.jpg"
+}
+</script>
 </head>
 <body>
+<noscript><div class="sinjs"><div>
+<h1>Habemus Fieles</h1>
+<p>Habemus Fieles es un juego incremental en pixel art que se juega gratis en el navegador y en el celu. El Papa llega en papamóvil por Avenida del Libertador y hay que llenar Palermo para la misa hasta juntar a los 46.044.703 argentinos del Censo 2022. El mapa es real, sacado de OpenStreetMap.</p>
+<h2>Cómo se juega</h2>
+<p>Tocás o hacés clic en la pantalla para bendecir, y cada bendición suma fieles. Con los fieles comprás ayudantes que convierten solos (monaguillos, coro, catequistas, monjas, carpas de reconciliación, parroquias, pantallas, obispos y peregrinos) y mejoras que multiplican todo. También hay poderes como la ola, el agua bendita, el botafumeiro y el papamóvil, y carteles con gritos de la gente que podés tocar para convertirlos. La misa avanza por sus momentos, de la previa a la bendición final.</p>
+<p>Es un juego de <a href="https://kvothesson.com/">Kvothesson</a>, del Universo Austral. Gratis, sin cuenta y sin instalar nada.</p>
+<p class="aviso">Para jugar hace falta tener JavaScript activado.</p>
+</div></div></noscript>
 <div id="izq"><div id="celebra"></div><div id="pista">Tocá la pantalla para bendecir</div>
   <canvas id="cv" width="200" height="150"></canvas>
   <div id="hud"><div id="cuenta"><img class="px" data-ic="fiel"><span>0</span></div><div id="fps">0/s</div><div id="lugar"></div><div id="fervor"><div></div></div></div>
