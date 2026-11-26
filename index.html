@@ -212,14 +212,15 @@ img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 </script>
 </head>
 <body>
-<noscript><div class="sinjs"><div>
+<div class="sinjs"><div>
 <h1>Habemus Fieles</h1>
 <p>Habemus Fieles es un juego incremental en pixel art que se juega gratis en el navegador y en el celu. El Papa llega en papamóvil por Avenida del Libertador y hay que llenar Palermo para la misa hasta juntar a los 46.044.703 argentinos del Censo 2022. El mapa es real, sacado de OpenStreetMap.</p>
 <h2>Cómo se juega</h2>
 <p>Tocás o hacés clic en la pantalla para bendecir, y cada bendición suma fieles. Con los fieles comprás ayudantes que convierten solos (monaguillos, coro, catequistas, monjas, carpas de reconciliación, parroquias, pantallas, obispos y peregrinos) y mejoras que multiplican todo. También hay poderes como la ola, el agua bendita, el botafumeiro y el papamóvil, y carteles con gritos de la gente que podés tocar para convertirlos. La misa avanza por sus momentos, de la previa a la bendición final.</p>
 <p>Es un juego de <a href="https://kvothesson.com/">Kvothesson</a>, del Universo Austral. Gratis, sin cuenta y sin instalar nada.</p>
 <p class="aviso">Para jugar hace falta tener JavaScript activado.</p>
-</div></div></noscript>
+</div></div>
+<script>document.querySelector(".sinjs").remove()</script>
 <div id="izq"><div id="celebra"></div><div id="pista">Tocá la pantalla para bendecir</div>
   <canvas id="cv" width="200" height="150"></canvas>
   <div id="hud"><div id="cuenta"><img class="px" data-ic="fiel"><span>0</span></div><div id="fps">0/s</div><div id="lugar"></div><div id="fervor"><div></div></div></div>
